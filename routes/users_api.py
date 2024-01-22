@@ -23,6 +23,19 @@ async def create_users(body: User) -> dict:
         "message": "users created successfully"
         ,"datas": document
     }
+# http://127.0.0.1:8000/users_api/new
+# {
+#     "name": "홍길동",
+#     "email": "test@example.com",
+#     "pswd": "password123",
+#     "manager": "김매니저",
+#     "sellist1": "상품1",
+#     "text": "안녕하세요. 반갑습니다."
+# }
+
+
+
+
 
 #로그인
 @router.get("/{id}", response_model=User)
@@ -34,6 +47,19 @@ async def retrieve_users(id: PydanticObjectId) -> User:
             detail="users with supplied ID does not exist"
         )
     return users
+#http://127.0.0.1:8000/users_api/65ae17c58fd7881c3089ccb1
+# {
+#     "_id": "65ae17c58fd7881c3089ccb1",
+#     "name": "홍길동",
+#     "email": "test@example.com",
+#     "pswd": "password123",
+#     "manager": "김매니저",
+#     "sellist1": "상품1",
+#     "text": "안녕하세요. 반갑습니다."
+# }
+
+
+
 
 #회원탈퇴
 @router.delete("/{id}") 
@@ -42,11 +68,17 @@ async def delete_users(id: PydanticObjectId) -> dict:
     if not users:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="users not found"
+            detail="users not found"                            #해당 id를 지우면 users not found
         )
     users = await user_database.delete(id)
 
     return {
-        "message": "users deleted successfully."
+        "message": "users deleted successfully."                #해당 id를 지우면 users deleted successfully
         ,"datas": users
     }
+
+# http://127.0.0.1:8000/users_api/65ae17c58fd7881c3089ccb1      # id를 매칭하여 삭제
+# {
+#     "message": "users deleted successfully.",
+#     "datas": true
+# }
