@@ -2,6 +2,7 @@ from typing import Any, List, Optional
 
 from beanie import init_beanie, PydanticObjectId
 from models.users import User
+from models.events import Event
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 # 변경 후 코드
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     async def initialize_database(self):
         client = AsyncIOMotorClient(self.DATABASE_URL)
         await init_beanie(database=client.get_default_database(),
-                          document_models=[User])
+                          document_models=[User,Event])
 
     class Config:
         env_file = ".env"
@@ -40,8 +41,8 @@ class Database:
     
     # 저장
     async def save(self, document) -> None:
-        await document.create()
-        return None   
+        doc = await document.create()
+        return doc   
      
     # column 값으로 여러 Documents 가져오기
     async def getsbyconditions(self, conditions:dict) -> [Any]:
@@ -59,6 +60,14 @@ class Database:
         if documents:
             return documents, pagination
         return False    
+
+    async def delete(self, id: PydanticObjectId):
+        doc = await self.get(id)
+        if not doc:
+            return False
+        await doc.delete()
+        return True
+
 
 if __name__ == '__main__':
     settings = Settings()
