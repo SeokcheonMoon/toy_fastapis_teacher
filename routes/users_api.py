@@ -36,7 +36,7 @@ async def retrieve_users(id: PydanticObjectId) -> User:
     return users
 
 #회원탈퇴
-@router.delete("/{id}")                                                                     # function이 delete
+@router.delete("/{id}") 
 async def delete_users(id: PydanticObjectId) -> dict:
     users = await user_database.get(id)
     if not users:
