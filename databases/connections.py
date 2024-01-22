@@ -68,6 +68,18 @@ class Database:
         await doc.delete()
         return True
 
+    # update with params json
+    async def update_withjson(self, id: PydanticObjectId, body):
+        doc_id = id
+
+        # des_body = {k: v for k, v in des_body.items() if v is not None}
+        update_query = {"$set": {**body}}
+
+        doc = await self.get(doc_id)
+        if not doc:
+            return False
+        await doc.update(update_query)
+        return doc
 
 if __name__ == '__main__':
     settings = Settings()

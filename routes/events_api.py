@@ -46,3 +46,37 @@ async def delete_event(id: PydanticObjectId) -> dict:
         "message": "Event deleted successfully."
         ,"datas": event
     }
+
+# update with id
+
+from fastapi import Request
+@router.put("/{id}", response_model=Event)
+async def update_event_withjson(id: PydanticObjectId, request:Request) -> Event:
+    event = await event_database.get(id)
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
+    body = await request.json()
+    updated_event = await event_database.update_withjson(id, body)
+    if not updated_event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event with supplied ID does not exist"
+        )
+    return updated_event
+
+# 전체 내용 가져오기
+@router.get("/")
+async def retrieve_all_events() -> dict:
+    events = await event_database.get_all()
+    return {"total_count" : len(events) , "datas" : events}
+
+
+
+
+
+
+
+
